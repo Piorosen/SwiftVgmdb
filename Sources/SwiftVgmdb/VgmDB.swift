@@ -3,6 +3,10 @@ import Foundation
 import SwiftSoup
 
 public class SwiftVgmDb {
+    public init() {
+        
+    }
+    
     func makeQuery(ack:VDSearchAnnotation) -> String {
         return "action=advancedsearch" +
             "&albumtitles=\(ack.title)" +
