@@ -2,7 +2,7 @@
 import Foundation
 import SwiftSoup
 
-public class VDVgmDb {
+public class SwiftVgmDb {
     func makeQuery(ack:VDSearchAnnotation) -> String {
         return "action=advancedsearch" +
             "&albumtitles=\(ack.title)" +
@@ -46,42 +46,6 @@ public class VDVgmDb {
             completeHandler(responseString)
         }
         task.resume()
-    }
-    
-    
-    func getAlbumList(ack:VDSearchAnnotation, completeHanlder: @escaping ([VDAlbum]) -> Void) {
-        requestWeb(ack: ack) { data in
-            var result = [VDAlbum]()
-            
-            if let data = data {
-                let doc = try? SwiftSoup.parse(data)
-                if let table = try? doc!.select("body > div:nth-child(5) > table:nth-child(3) > tbody > tr > td > table > tbody > tr") {
-                    
-                    for item in table.array() {
-                        let catalogHtml = try? item.select("td:nth-child(1) > span").first()
-                        let titleHtml = try? item.select("td:nth-child(3) > a > span:nth-child(1)").first()
-                        let idHtml = try? item.select("td:nth-child(3) > a").first()
-                        
-                        let dateHtml = try? item.select("td:nth-child(4) > a").first()
-                        let formatHtml = try? item.select("td:nth-child(5)").first()
-                        
-                        if let catalogHtml = catalogHtml, let titleHtml = titleHtml, let dateHtml = dateHtml, let formatHtml = formatHtml, let idHtml = idHtml, let id = try? idHtml.attr("href") {
-                            
-                            let id = Int(id.split(separator: "/").last!) ?? -1
-                            let catalog = catalogHtml.ownText()
-                            let title = titleHtml.ownText()
-                            let date = dateHtml.ownText()
-                            let media = formatHtml.ownText()
-                            
-                            result.append(
-                                VDAlbum(id: id, catalogNumber: catalog, albumTitle: title, date: date, mediaFormat: media))
-                        }
-                    }
-                }
-            }
-            
-            completeHanlder(result)
-        }
     }
     
     func getInfoTbody(web:Document) -> [VDTrackInfo:String] {
@@ -160,7 +124,42 @@ public class VDVgmDb {
     }
     
     
-    func getTrackList(id:Int, completeHandler: @escaping (VDTrack) -> Void) -> [VDTrack] {
+    public func getAlbumList(ack:VDSearchAnnotation, completeHanlder: @escaping ([VDAlbum]) -> Void) {
+        requestWeb(ack: ack) { data in
+            var result = [VDAlbum]()
+            
+            if let data = data {
+                let doc = try? SwiftSoup.parse(data)
+                if let table = try? doc!.select("body > div:nth-child(5) > table:nth-child(3) > tbody > tr > td > table > tbody > tr") {
+                    
+                    for item in table.array() {
+                        let catalogHtml = try? item.select("td:nth-child(1) > span").first()
+                        let titleHtml = try? item.select("td:nth-child(3) > a > span:nth-child(1)").first()
+                        let idHtml = try? item.select("td:nth-child(3) > a").first()
+                        
+                        let dateHtml = try? item.select("td:nth-child(4) > a").first()
+                        let formatHtml = try? item.select("td:nth-child(5)").first()
+                        
+                        if let catalogHtml = catalogHtml, let titleHtml = titleHtml, let dateHtml = dateHtml, let formatHtml = formatHtml, let idHtml = idHtml, let id = try? idHtml.attr("href") {
+                            
+                            let id = Int(id.split(separator: "/").last!) ?? -1
+                            let catalog = catalogHtml.ownText()
+                            let title = titleHtml.ownText()
+                            let date = dateHtml.ownText()
+                            let media = formatHtml.ownText()
+                            
+                            result.append(
+                                VDAlbum(id: id, catalogNumber: catalog, albumTitle: title, date: date, mediaFormat: media))
+                        }
+                    }
+                }
+            }
+            
+            completeHanlder(result)
+        }
+    }
+    
+    public func getTrackList(id:Int, completeHandler: @escaping (VDTrack) -> Void) -> [VDTrack] {
         let result = [VDTrack]()
         let req = URLRequest(url: URL(string: "https://vgmdb.net/album/\(id)")!)
         

@@ -8,6 +8,6 @@
 import Foundation
 
 public struct VDTrack {
-    let albumInfo:[VDTrackInfo:String]
-    let trackInfo:[VDLangauge:[[String]]]
+    public let albumInfo:[VDTrackInfo:String]
+    public let trackInfo:[VDLangauge:[[String]]]
 }
