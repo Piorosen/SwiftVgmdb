@@ -163,7 +163,7 @@ public class SwiftVgmDb {
         }
     }
     
-    public func getTrackList(id:Int, completeHandler: @escaping (VDTrack) -> Void) -> [VDTrack] {
+    public func getTrackList(id:Int, completeHandler: @escaping (VDTrack) -> Void) {
         let result = [VDTrack]()
         let req = URLRequest(url: URL(string: "https://vgmdb.net/album/\(id)")!)
         
