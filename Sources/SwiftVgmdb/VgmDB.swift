@@ -108,7 +108,7 @@ public class SwiftVgmDb {
                 var discsItem = [[String]]()
                 
                 for disc in discs {
-                    guard let ss = try? disc.select("tbody > tr.rolebit") else {
+                    guard let ss = try? disc.select("tbody > tr.rolebit > td:nth-child(2)") else {
                         continue
                     }
                     var discItem = [String]()

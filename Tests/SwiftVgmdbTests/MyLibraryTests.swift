@@ -23,7 +23,10 @@ final class MyLibraryTests: XCTestCase {
         }
         
         run.getTrackList(id: 72868) { db in
-            
+            guard let list = db.trackInfo[.english] else {
+                XCTFail()
+                return
+            }
             exception.fulfill()
         }
         
